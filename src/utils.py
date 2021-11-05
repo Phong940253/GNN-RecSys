@@ -41,7 +41,7 @@ def read_data(file_path):
                      header=0, sep=';', quotechar='"',
                      error_bad_lines=False)
     elif file_path.endswith('.csv'):
-        obj = pd.read_csv(file_path)
+        obj = pd.read_csv(file_path, sep=';', encoding = "ISO-8859-1")
     elif file_path.endswith('.pkl'):
         with open(file_path, 'rb') as handle:
             obj = pickle.load(handle)

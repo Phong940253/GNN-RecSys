@@ -12,19 +12,19 @@ from src.utils import read_data
 def format_dfs(
         train_path,  # str (path) or pd.Dataframe directly (df)
         test_path,  # str (path) or pd.Dataframe directly (df)
-        item_sport_path: str,
-        user_sport_path: str,
-        sport_sportg_path: str,
+        # item_sport_path: str,
+        # user_sport_path: str,
+        # sport_sportg_path: str,
         item_feat_path: str,
         user_feat_path: str,
-        sport_feat_path: str,
-        sport_onehot_path: str,
+        # sport_feat_path: str,
+        # sport_onehot_path: str,
         remove: float = 0.,
         ctm_id_type: str = 'CUSTOMER IDENTIFIER',
         item_id_type: str = 'SPECIFIC ITEM IDENTIFIER',
-        days_of_purchases: int = 710,
-        days_of_clicks: int = 710,
-        lifespan_of_items: int = 710,
+        # days_of_purchases: int = 710,
+        # days_of_clicks: int = 710,
+        # lifespan_of_items: int = 710,
         report_model_coverage: bool = False,
 ):
     """
@@ -66,18 +66,16 @@ def format_dfs(
 
     Returns
     -------
-    user_item_train, user_item_test, user_sport_interaction, item_sport_interaction, sport_sportg_interaction:
-        Dataframes of interactions.
-    item_feat_df, user_feat_df, sport_feat_df, sport_onehot_df:
-        Dataframes of features.
+    user_item_train, user_item_test, Dataframes of interactions.
+    item_feat_df, user_feat_df, Dataframes of features.
     """
     np.random.seed(11)
 
     # User, item and sport features
     item_feat_df = read_data(item_feat_path)
     user_feat_df = read_data(user_feat_path)
-    sport_feat_df = read_data(sport_feat_path)
-    sport_onehot_df = read_data(sport_onehot_path)
+    # sport_feat_df = read_data(sport_feat_path)
+    # sport_onehot_df = read_data(sport_onehot_path)
 
     # User-item interaction. We allow direct df instead of path: check which was passed.
     if isinstance(train_path, str):
@@ -93,30 +91,30 @@ def format_dfs(
     else:
         raise TypeError(f'Type of {test_path} not recognized. Should be str or pd.DataFrame')
 
-    if days_of_purchases < 710:
-        most_recent_date = datetime.strptime(max(user_item_train.hit_date), '%Y-%m-%d')
-        limit_date = datetime.strftime(
-            (most_recent_date - timedelta(days=int(days_of_purchases))),
-            format='%Y-%m-%d'
-        )
-        user_item_train = user_item_train[(user_item_train.hit_date >= limit_date) | (user_item_train.buy == 0)]
+    # if days_of_purchases < 710:
+    #     most_recent_date = datetime.strptime(max(user_item_train.hit_date), '%Y-%m-%d')
+    #     limit_date = datetime.strftime(
+    #         (most_recent_date - timedelta(days=int(days_of_purchases))),
+    #         format='%Y-%m-%d'
+    #     )
+    #     user_item_train = user_item_train[(user_item_train.hit_date >= limit_date) | (user_item_train.buy == 0)]
 
-    if days_of_clicks < 710:
-        most_recent_date = datetime.strptime(max(user_item_train.hit_date), '%Y-%m-%d')
-        limit_date = datetime.strftime(
-            (most_recent_date - timedelta(days=int(days_of_clicks))),
-            format='%Y-%m-%d'
-        )
-        user_item_train = user_item_train[(user_item_train.hit_date >= limit_date) | (user_item_train.buy == 1)]
+    # if days_of_clicks < 710:
+    #     most_recent_date = datetime.strptime(max(user_item_train.hit_date), '%Y-%m-%d')
+    #     limit_date = datetime.strftime(
+    #         (most_recent_date - timedelta(days=int(days_of_clicks))),
+    #         format='%Y-%m-%d'
+    #     )
+    #     user_item_train = user_item_train[(user_item_train.hit_date >= limit_date) | (user_item_train.buy == 1)]
 
-    if lifespan_of_items < days_of_purchases:
-        most_recent_date = datetime.strptime(max(user_item_train.hit_date), '%Y-%m-%d')
-        limit_date = datetime.strftime(
-            (most_recent_date - timedelta(days=int(lifespan_of_items))),
-            format='%Y-%m-%d'
-        )
-        item_list = user_item_train[user_item_train.hit_date >= limit_date]['SPECIFIC ITEM IDENTIFIER'].unique()
-        user_item_train = user_item_train[user_item_train['SPECIFIC ITEM IDENTIFIER'].isin(item_list)]
+    # if lifespan_of_items < days_of_purchases:
+    #     most_recent_date = datetime.strptime(max(user_item_train.hit_date), '%Y-%m-%d')
+    #     limit_date = datetime.strftime(
+    #         (most_recent_date - timedelta(days=int(lifespan_of_items))),
+    #         format='%Y-%m-%d'
+    #     )
+    #     item_list = user_item_train[user_item_train.hit_date >= limit_date]['SPECIFIC ITEM IDENTIFIER'].unique()
+    #     user_item_train = user_item_train[user_item_train['SPECIFIC ITEM IDENTIFIER'].isin(item_list)]
 
     if remove > 0:
         ctm_list = user_item_train[ctm_id_type].unique()
@@ -143,31 +141,31 @@ def format_dfs(
 
 
     # Item-sport interaction
-    item_sport_interaction = read_data(item_sport_path)
-    if lifespan_of_items < days_of_purchases:
-        item_sport_interaction = item_sport_interaction[item_sport_interaction['SPECIFIC ITEM IDENTIFIER'].isin(
-            item_list)]
-    if item_id_type == 'GENERAL ITEM IDENTIFIER':
-        item_sport_interaction = item_sport_interaction.merge(
-            item_feat_df[['SPECIFIC ITEM IDENTIFIER', 'GENERAL ITEM IDENTIFIER']],
-                                                              how='left',
-                                                              on='SPECIFIC ITEM IDENTIFIER')
+    # item_sport_interaction = read_data(item_sport_path)
+    # if lifespan_of_items < days_of_purchases:
+    #     item_sport_interaction = item_sport_interaction[item_sport_interaction['SPECIFIC ITEM IDENTIFIER'].isin(
+    #         item_list)]
+    # if item_id_type == 'GENERAL ITEM IDENTIFIER':
+    #     item_sport_interaction = item_sport_interaction.merge(
+    #         item_feat_df[['SPECIFIC ITEM IDENTIFIER', 'GENERAL ITEM IDENTIFIER']],
+    #                                                           how='left',
+    #                                                           on='SPECIFIC ITEM IDENTIFIER')
     # Drop duplicates if not item_id_type not model number
-    item_sport_interaction.drop_duplicates(inplace=True)
+    # item_sport_interaction.drop_duplicates(inplace=True)
 
 
     # User-sport interaction
-    user_sport_interaction = read_data(user_sport_path)
-    if remove > 0:
-        user_sport_interaction = user_sport_interaction[user_sport_interaction[ctm_id_type].isin(ctm_list)]
+    # user_sport_interaction = read_data(user_sport_path)
+    # if remove > 0:
+    #     user_sport_interaction = user_sport_interaction[user_sport_interaction[ctm_id_type].isin(ctm_list)]
 
     # Sport-sportgroups interaction
-    sport_sportg_interaction = read_data(sport_sportg_path)
+    # sport_sportg_interaction = read_data(sport_sportg_path)
 
     if report_model_coverage:
         train_users = user_item_train[ctm_id_type].unique().tolist()
         test_users = user_item_test[ctm_id_type].unique().tolist()
-        sport_users = user_sport_interaction[ctm_id_type].unique().tolist()
+        # sport_users = user_sport_interaction[ctm_id_type].unique().tolist()
         unseen_users = [uid for uid in test_users if uid not in train_users]
         print(f'There are {len(unseen_users)} users with no interactions')
         train_users.extend(sport_users)
@@ -175,8 +173,7 @@ def format_dfs(
         print(f'and {len(unseen_users)} with also no sports associated')
         print(f'out of {len(test_users)}')
 
-    return user_item_train, user_item_test, item_sport_interaction, user_sport_interaction, \
-           sport_sportg_interaction, item_feat_df, user_feat_df, sport_feat_df, sport_onehot_df
+    return user_item_train, user_item_test, item_feat_df, user_feat_df
 
 
 def create_ids(user_item_train: pd.DataFrame,

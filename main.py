@@ -120,9 +120,9 @@ def train(data, fixed_params, data_paths,
                 'hidden': params['hidden_dim']}
 
     all_sids = None
-    if 'sport' in valid_graph.ntypes:
-        dim_dict['sport'] = valid_graph.nodes['sport'].data['features'].shape[1]
-        all_sids = np.arange(valid_graph.num_nodes('sport'))
+    # if 'sport' in valid_graph.ntypes:
+    #     dim_dict['sport'] = valid_graph.nodes['sport'].data['features'].shape[1]
+    #     all_sids = np.arange(valid_graph.num_nodes('sport'))
 
     # get training and test ids
     (
@@ -293,7 +293,7 @@ def train(data, fixed_params, data_paths,
                 trained_model,
                 params['out_dim'],
                 ground_truth,
-                all_eids_dict[('user', 'buys', 'item')],
+                all_eids_dict[('user', 'vote', 'item')],
                 fixed_params.k,
                 True,  # Remove already bought
                 cuda,
@@ -315,23 +315,23 @@ def train(data, fixed_params, data_paths,
         trained_model.eval()
         with torch.no_grad():
             log.debug('ANALYSIS OF RECOMMENDATIONS')
-            if 'sport' in train_graph.ntypes:
-                result_sport = explore_sports(embeddings,
-                                              data.sport_feat_df,
-                                              data.spt_id,
-                                              fixed_params.num_choices)
+            # if 'sport' in train_graph.ntypes:
+            #     result_sport = explore_sports(embeddings,
+            #                                   data.sport_feat_df,
+            #                                   data.spt_id,
+            #                                   fixed_params.num_choices)
 
-                save_txt(result_sport, data_paths.result_filepath, mode='a')
+            #     save_txt(result_sport, data_paths.result_filepath, mode='a')
 
             already_bought_dict = create_already_bought(valid_graph,
-                                                        all_eids_dict[('user', 'buys', 'item')],
+                                                        all_eids_dict[('user', 'vote', 'item')],
                                                         )
             already_clicked_dict = None
-            if fixed_params.discern_clicks:
-                already_clicked_dict = create_already_bought(valid_graph,
-                                                             all_eids_dict[('user', 'clicks', 'item')],
-                                                             etype='clicks',
-                                                             )
+            # if fixed_params.discern_clicks:
+            #     already_clicked_dict = create_already_bought(valid_graph,
+            #                                                  all_eids_dict[('user', 'clicks', 'item')],
+            #                                                  etype='clicks',
+            #                                                  )
 
             users, items = data.ground_truth_test
             ground_truth_dict = create_ground_truth(users, items)

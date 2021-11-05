@@ -29,15 +29,15 @@ num_workers = 4 if cuda else 0
 
 class TrainDataPaths:
     def __init__(self):
-        self.result_filepath = 'TXT FILE WHERE TO LOG THE RESULTS .txt'
-        self.sport_feat_path = 'FEATURE DATASET, SPORTS (sport names) .csv'
-        self.full_interaction_path = 'INTERACTION LIST, USER-ITEM (Full dataset, not splitted between train & test).csv'
-        self.item_sport_path = 'INTERACTION LIST, ITEM-SPORT .csv'
-        self.user_sport_path = 'INTERACTION LIST, USER-SPORT .csv'
-        self.sport_sportg_path = 'INTERACTION LIST, SPORT-SPORT .csv'
-        self.item_feat_path = 'FEATURE DATASET, ITEMS .csv'
-        self.user_feat_path = 'FEATURE DATASET, USERS.csv'
-        self.sport_onehot_path = 'FEATURE DATASET, SPORTS (one-hot vectors) .csv'
+        self.result_filepath = './data/result.txt'
+        # self.sport_feat_path = 'FEATURE DATASET, SPORTS (sport names) .csv'
+        self.full_interaction_path = './data/BX-Book-Ratings.csv'
+        # self.item_sport_path = 'INTERACTION LIST, ITEM-SPORT .csv'
+        # self.user_sport_path = 'INTERACTION LIST, USER-SPORT .csv'
+        # self.sport_sportg_path = 'INTERACTION LIST, SPORT-SPORT .csv'
+        self.item_feat_path = './data/BX-Books.csv.csv'
+        self.user_feat_path = './data/BX-Book-Users.csv.csv'
+        # self.sport_onehot_path = 'FEATURE DATASET, SPORTS (one-hot vectors) .csv'
 
 
 def train_full_model(fixed_params_path,
@@ -52,7 +52,7 @@ def train_full_model(fixed_params_path,
     Files needed to run
     -------------------
     All the files in the TrainDataPaths:
-        It includes all the interactions between user, sport and items, as well as features for user, sport and items.
+        It includes all the interactions between user, and items, as well as features for user, and items.
     Fixed_params and params found in hyperparametrization:
         Those params will indicate how to train the model. Usually, they are found when running the hyperparametrization
         loop.
@@ -88,7 +88,7 @@ def train_full_model(fixed_params_path,
     full_interaction_data = read_data(train_data_paths.full_interaction_path)
     train_df, test_df = presplit_data(presplit_item_feat,
                                       full_interaction_data,
-                                      num_min=3,
+                                      num_min=1,
                                       remove_unk=True,
                                       sort=True,
                                       test_size_days=1,
