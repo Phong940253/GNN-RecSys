@@ -582,6 +582,7 @@ def main(from_beginning, verbose, visualization, check_embedding,
             x0=searchable_params.default_parameters,
             callback=[checkpoint_saver],
             random_state=46,
+            n_jobs=-1
         )
 
     if not from_beginning:

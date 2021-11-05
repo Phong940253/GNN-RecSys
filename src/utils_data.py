@@ -67,7 +67,7 @@ class FixedParameters:
             When parametrizing the GNN, edges of purchases are always included. If true, clicks will also
             be included
         """
-        self.ctm_id_type = 'CUSTOMER IDENTIFIER'
+        self.ctm_id_type = 'User-ID'
         # self.days_of_purchases = 365  # Max is 710
         # self.days_of_clicks = 30  # Max is 710
         self.discern_clicks = True
@@ -92,7 +92,7 @@ class FixedParameters:
         self.remove_false_negative = True
         self.remove_on_inference = .7
         self.remove_train_eids = False
-        self.report_model_coverage = False
+        self.report_model_coverage = True
         self.reverse_etype = {('user', 'vote', 'item'): ('item', 'vote-by', 'user')}
         # if self.discern_clicks:
         #     self.reverse_etype[('user', 'clicks', 'item')] = ('item', 'clicked-by', 'user')
@@ -104,7 +104,7 @@ class FixedParameters:
         self.valid_size = 0.05
         # self.dropout = .5  # HP
         # self.norm = False  # HP
-        # self.use_popularity = False  # HP
+        self.use_popularity = True  # HP
         # self.days_popularity = 0  # HP
         # self.weight_popularity = 0.  # HP
         # self.use_recency = False  # HP
@@ -152,7 +152,7 @@ class DataLoader:
         )
         if fixed_params.report_model_coverage:
             print('Reporting model coverage')
-            (_, _, _, _, _, _, _, _
+            (_, _, _, _
              ) = format_dfs(
                 self.data_paths.train_path,
                 self.data_paths.test_path,
@@ -198,28 +198,28 @@ class DataLoader:
             item_id_type=fixed_params.item_id_type,
             ctm_id_type=fixed_params.ctm_id_type,
             # spt_id_type=fixed_params.spt_id_type,
-            discern_clicks=fixed_params.discern_clicks,
+            # discern_clicks=fixed_params.discern_clicks,
             duplicates=fixed_params.duplicates,
         )
 
-        if fixed_params.discern_clicks:
-            self.graph_schema = {
-                ('user', 'vote', 'item'):
-                    list(zip(self.adjacency_dict['purchases_src'], self.adjacency_dict['purchases_dst'])),
-                ('item', 'vote-by', 'user'):
-                    list(zip(self.adjacency_dict['purchases_dst'], self.adjacency_dict['purchases_src'])),
-                # ('user', 'clicks', 'item'):
-                #     list(zip(self.adjacency_dict['clicks_src'], self.adjacency_dict['clicks_dst'])),
-                # ('item', 'clicked-by', 'user'):
-                #     list(zip(self.adjacency_dict['clicks_dst'], self.adjacency_dict['clicks_src'])),
-            }
-        else:
-            self.graph_schema = {
-                ('user', 'vote', 'item'):
-                    list(zip(self.adjacency_dict['user_item_src'], self.adjacency_dict['user_item_dst'])),
-                ('item', 'vote-by', 'user'):
-                    list(zip(self.adjacency_dict['user_item_dst'], self.adjacency_dict['user_item_src'])),
-            }
+        # if fixed_params.discern_clicks:
+        #     self.graph_schema = {
+        #         ('user', 'vote', 'item'):
+        #             list(zip(self.adjacency_dict['purchases_src'], self.adjacency_dict['purchases_dst'])),
+        #         ('item', 'vote-by', 'user'):
+        #             list(zip(self.adjacency_dict['purchases_dst'], self.adjacency_dict['purchases_src'])),
+        #         # ('user', 'clicks', 'item'):
+        #         #     list(zip(self.adjacency_dict['clicks_src'], self.adjacency_dict['clicks_dst'])),
+        #         # ('item', 'clicked-by', 'user'):
+        #         #     list(zip(self.adjacency_dict['clicks_dst'], self.adjacency_dict['clicks_src'])),
+        #     }
+        # else:
+        self.graph_schema = {
+            ('user', 'vote', 'item'):
+                list(zip(self.adjacency_dict['user_item_src'], self.adjacency_dict['user_item_dst'])),
+            ('item', 'vote-by', 'user'):
+                list(zip(self.adjacency_dict['user_item_dst'], self.adjacency_dict['user_item_src'])),
+        }
         # if fixed_params.include_sport:
         #     self.graph_schema.update(
         #         {
@@ -274,7 +274,7 @@ def assign_graph_features(graph,
         # data.spt_id,
         data.user_item_train,
         params['use_popularity'],
-        params['days_popularity'],
+        # params['days_popularity'],
         fixed_params.item_id_type,
         fixed_params.ctm_id_type,
         # fixed_params.spt_id_type,
